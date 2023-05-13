@@ -9,9 +9,10 @@ import 'package:stormberry/stormberry.dart';
 
 class AuthRpc extends AuthRpcServiceBase {
   @override
-  Future<ResponseDto> deleteUser(ServiceCall call, RequestDto request) {
-    // TODO: implement deleteUser
-    throw UnimplementedError();
+  Future<ResponseDto> deleteUser(ServiceCall call, RequestDto request) async {
+    final id = Utils.getIdFromMetadata(call);
+    await db.users.deleteOne(id);
+    return ResponseDto(message: "success");
   }
 
   @override
@@ -87,9 +88,19 @@ class AuthRpc extends AuthRpcServiceBase {
   }
 
   @override
-  Future<UserDto> updateUser(ServiceCall call, UserDto request) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
+  Future<UserDto> updateUser(ServiceCall call, UserDto request) async {
+    final id = Utils.getIdFromMetadata(call);
+    await db.users.updateOne(UserUpdateRequest(
+      id: id,
+      username: request.username.isEmpty ? null : request.username,
+      email: request.email.isEmpty ? null : Utils.encryptField(request.email),
+      password: request.password.isEmpty
+          ? null
+          : Utils.getHashPassword(request.password),
+    ));
+    final user = await db.users.queryUser(id);
+    if (user == null) throw GrpcError.notFound("user not found");
+    return Utils.convertUserDto(user);
   }
 
   TokensDto _createTokens(String id) {
