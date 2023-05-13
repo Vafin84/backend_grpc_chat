@@ -25,9 +25,6 @@ class AuthRpc extends AuthRpcServiceBase {
 
   @override
   Future<TokensDto> refreshToken(ServiceCall call, TokensDto request) async {
-    if (db.connection().isClosed) {
-      db = initDatebse();
-    }
     if (request.refreshToken.isEmpty) {
       throw GrpcError.invalidArgument("Refresh token not found");
     }
@@ -40,9 +37,6 @@ class AuthRpc extends AuthRpcServiceBase {
 
   @override
   Future<TokensDto> signIn(ServiceCall call, UserDto request) async {
-    if (db.connection().isClosed) {
-      db = initDatebse();
-    }
     if (request.email.isEmpty) {
       throw GrpcError.invalidArgument("Email not found");
     }
@@ -63,9 +57,6 @@ class AuthRpc extends AuthRpcServiceBase {
 
   @override
   Future<TokensDto> signUp(ServiceCall call, UserDto request) async {
-    if (db.connection().isClosed) {
-      db = initDatebse();
-    }
     if (request.email.isEmpty) {
       throw GrpcError.invalidArgument("Email not found");
     }
