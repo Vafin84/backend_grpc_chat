@@ -1,17 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
-
-import 'package:auth/data/db.dart';
-import 'package:auth/data/grpc_interceptors.dart';
-import 'package:auth/domain/auth_rpc.dart';
-import 'package:auth/env.dart';
+import 'package:chats/data/db.dart';
+import 'package:chats/data/grpc_interceptors.dart';
+import 'package:chats/env.dart';
 import 'package:grpc/grpc.dart';
 
 Future<void> startServer() async {
   runZonedGuarded(() async {
-    final authServer = Server([
-      AuthRpc()
-    ], <Interceptor>[
+    final authServer = Server([], <Interceptor>[
       GrpsInterceptors.tokenInterceptor,
     ], CodecRegistry(codecs: [GzipCodec()]));
 
