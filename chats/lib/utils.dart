@@ -1,4 +1,5 @@
 import 'package:chats/data/chat/chat.dart';
+import 'package:chats/data/message/message.dart';
 import 'package:chats/env.dart';
 import 'package:chats/generated/chats.pb.dart';
 import 'package:grpc/grpc.dart';
@@ -29,5 +30,22 @@ abstract class Utils {
     } catch (_) {
       rethrow;
     }
+  }
+
+  static ChatDto parseChat(ChatView chat) {
+    return ChatDto(
+      authorId: chat.authorId,
+      id: chat.id.toString(),
+      name: chat.name,
+      messages: [...chat.message.map((e) => parseMessage(e))],
+    );
+  }
+
+  static MessageDto parseMessage(MessageView message) {
+    return MessageDto(
+      authorId: message.authorId,
+      body: message.body,
+      id: message.id.toString(),
+    );
   }
 }

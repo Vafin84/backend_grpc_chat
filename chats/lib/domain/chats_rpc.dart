@@ -2,6 +2,7 @@ import 'dart:isolate';
 
 import 'package:chats/data/chat/chat.dart';
 import 'package:chats/data/db.dart';
+import 'package:chats/data/message/message.dart';
 import 'package:chats/generated/chats.pbgrpc.dart';
 import 'package:chats/utils.dart';
 import 'package:grpc/grpc.dart';
@@ -39,9 +40,20 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> deletemesage(ServiceCall call, MessageDto request) {
-    // TODO: implement deletemesage
-    throw UnimplementedError();
+  Future<ResponseDto> deletemesage(ServiceCall call, MessageDto request) async {
+    final messageId = int.tryParse(request.id);
+    if (messageId == null) {
+      throw GrpcError.invalidArgument("Message id not found");
+    }
+    final message = await db.messages.queryMessage(messageId);
+    if (message == null) throw GrpcError.invalidArgument("Message not found");
+    final userId = Utils.getIdFromMetadata(call);
+    if (message.authorId == userId.toString()) {
+      await db.messages.deleteOne(messageId);
+      return ResponseDto(message: "success");
+    } else {
+      throw GrpcError.permissionDenied();
+    }
   }
 
   @override
@@ -55,9 +67,17 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) {
-    // TODO: implement fetchChat
-    throw UnimplementedError();
+  Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) async {
+    final chatId = int.tryParse(request.id);
+    if (chatId == null) throw GrpcError.invalidArgument("Chat id not found");
+    final chat = await db.chats.queryChat(chatId);
+    if (chat == null) throw GrpcError.invalidArgument("Chat not found");
+    final authorId = Utils.getIdFromMetadata(call);
+    if (chat.authorId == authorId.toString()) {
+      return await Isolate.run(() => Utils.parseChat(chat));
+    } else {
+      throw GrpcError.permissionDenied();
+    }
   }
 
   @override
@@ -67,8 +87,16 @@ class ChatRpc extends ChatsRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> sendMessage(ServiceCall call, MessageDto request) {
-    // TODO: implement sendMessage
-    throw UnimplementedError();
+  Future<ResponseDto> sendMessage(ServiceCall call, MessageDto request) async {
+    final authorId = Utils.getIdFromMetadata(call);
+    final chatId = int.tryParse(request.chatId);
+    if (chatId == null) throw GrpcError.invalidArgument("Chat id not found");
+    if (request.body.isEmpty) throw GrpcError.invalidArgument("Body is empty");
+    await db.messages.insertOne(MessageInsertRequest(
+      body: request.body,
+      authorId: authorId.toString(),
+      chatId: chatId,
+    ));
+    return ResponseDto(message: "success");
   }
 }
