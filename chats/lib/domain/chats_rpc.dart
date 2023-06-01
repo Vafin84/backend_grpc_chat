@@ -15,11 +15,14 @@ class ChatRpc extends ChatsRpcServiceBase {
     if (request.name.isEmpty) {
       throw GrpcError.invalidArgument("Chat name not found");
     }
+    if (request.memberId.isEmpty) {
+      throw GrpcError.invalidArgument("Member id not found");
+    }
     await db.chats.insertOne(
       ChatInsertRequest(
-        name: request.name,
-        authorId: id.toString(),
-      ),
+          name: request.name,
+          authorId: id.toString(),
+          memberId: request.memberId),
     );
     return ResponseDto(message: "success");
   }
@@ -29,7 +32,7 @@ class ChatRpc extends ChatsRpcServiceBase {
     final authorId = Utils.getIdFromMetadata(call);
     final chatId = int.tryParse(request.id);
     if (chatId == null) throw GrpcError.invalidArgument("Chat id not found");
-    final chat = await db.chats.queryChat(chatId);
+    final chat = await db.chats.queryShortView(chatId);
     if (chat == null) throw GrpcError.notFound("Chat not found");
     if (chat.authorId == authorId.toString()) {
       await db.chats.deleteOne(chatId);
@@ -60,8 +63,8 @@ class ChatRpc extends ChatsRpcServiceBase {
   Future<ListChatsDto> fetchAllChats(
       ServiceCall call, RequestDto request) async {
     final id = Utils.getIdFromMetadata(call);
-    final listChats =
-        await db.chats.queryChats(QueryParams(where: "author_id='$id'"));
+    final listChats = await db.chats.queryShortViews(
+        QueryParams(where: "author_id='$id' OR member_id='$id'"));
     if (listChats.isEmpty) return ListChatsDto(chats: []);
     return Isolate.run(() => Utils.parseChats(listChats));
   }
@@ -70,10 +73,11 @@ class ChatRpc extends ChatsRpcServiceBase {
   Future<ChatDto> fetchChat(ServiceCall call, ChatDto request) async {
     final chatId = int.tryParse(request.id);
     if (chatId == null) throw GrpcError.invalidArgument("Chat id not found");
-    final chat = await db.chats.queryChat(chatId);
+    final chat = await db.chats.queryFullView(chatId);
     if (chat == null) throw GrpcError.invalidArgument("Chat not found");
-    final authorId = Utils.getIdFromMetadata(call);
-    if (chat.authorId == authorId.toString()) {
+    final userId = Utils.getIdFromMetadata(call);
+    if (chat.authorId == userId.toString() ||
+        chat.memberId == userId.toString()) {
       return await Isolate.run(() => Utils.parseChat(chat));
     } else {
       throw GrpcError.permissionDenied();

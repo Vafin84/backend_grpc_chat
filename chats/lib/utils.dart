@@ -18,13 +18,14 @@ abstract class Utils {
     return getIdFromToken(accessToken);
   }
 
-  static ListChatsDto parseChats(List<ChatView> list) {
+  static ListChatsDto parseChats(List<ShortChatView> list) {
     try {
       return ListChatsDto(
         chats: list.map((chat) => ChatDto(
               id: chat.id.toString(),
               name: chat.name,
               authorId: chat.authorId,
+              memberId: chat.memberId,
             )),
       );
     } catch (_) {
@@ -32,11 +33,12 @@ abstract class Utils {
     }
   }
 
-  static ChatDto parseChat(ChatView chat) {
+  static ChatDto parseChat(FullChatView chat) {
     return ChatDto(
       authorId: chat.authorId,
       id: chat.id.toString(),
       name: chat.name,
+      memberId: chat.memberId,
       messages: [...chat.message.map((e) => parseMessage(e))],
     );
   }

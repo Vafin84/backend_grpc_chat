@@ -85,6 +85,7 @@ class ChatDto extends $pb.GeneratedMessage {
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'authorId')
     ..pc<MessageDto>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'messages', $pb.PbFieldType.PM, subBuilder: MessageDto.create)
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memberId')
     ..hasRequiredFields = false
   ;
 
@@ -94,6 +95,7 @@ class ChatDto extends $pb.GeneratedMessage {
     $core.String? name,
     $core.String? authorId,
     $core.Iterable<MessageDto>? messages,
+    $core.String? memberId,
   }) {
     final _result = create();
     if (id != null) {
@@ -107,6 +109,9 @@ class ChatDto extends $pb.GeneratedMessage {
     }
     if (messages != null) {
       _result.messages.addAll(messages);
+    }
+    if (memberId != null) {
+      _result.memberId = memberId;
     }
     return _result;
   }
@@ -160,6 +165,15 @@ class ChatDto extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(4)
   $core.List<MessageDto> get messages => $_getList(3);
+
+  @$pb.TagNumber(5)
+  $core.String get memberId => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set memberId($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasMemberId() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearMemberId() => clearField(5);
 }
 
 class MessageDto extends $pb.GeneratedMessage {

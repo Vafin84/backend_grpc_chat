@@ -14,8 +14,10 @@ abstract class ChatRepository
         ModelRepositoryDelete<int> {
   factory ChatRepository._(Database db) = _ChatRepository;
 
-  Future<ChatView?> queryChat(int id);
-  Future<List<ChatView>> queryChats([QueryParams? params]);
+  Future<ShortChatView?> queryShortView(int id);
+  Future<List<ShortChatView>> queryShortViews([QueryParams? params]);
+  Future<FullChatView?> queryFullView(int id);
+  Future<List<FullChatView>> queryFullViews([QueryParams? params]);
 }
 
 class _ChatRepository extends BaseRepository
@@ -27,13 +29,23 @@ class _ChatRepository extends BaseRepository
   _ChatRepository(super.db) : super(tableName: 'chats', keyName: 'id');
 
   @override
-  Future<ChatView?> queryChat(int id) {
-    return queryOne(id, ChatViewQueryable());
+  Future<ShortChatView?> queryShortView(int id) {
+    return queryOne(id, ShortChatViewQueryable());
   }
 
   @override
-  Future<List<ChatView>> queryChats([QueryParams? params]) {
-    return queryMany(ChatViewQueryable(), params);
+  Future<List<ShortChatView>> queryShortViews([QueryParams? params]) {
+    return queryMany(ShortChatViewQueryable(), params);
+  }
+
+  @override
+  Future<FullChatView?> queryFullView(int id) {
+    return queryOne(id, FullChatViewQueryable());
+  }
+
+  @override
+  Future<List<FullChatView>> queryFullViews([QueryParams? params]) {
+    return queryMany(FullChatViewQueryable(), params);
   }
 
   @override
@@ -41,8 +53,8 @@ class _ChatRepository extends BaseRepository
     if (requests.isEmpty) return [];
     var values = QueryValues();
     var rows = await db.query(
-      'INSERT INTO "chats" ( "name", "author_id" )\n'
-      'VALUES ${requests.map((r) => '( ${values.add(r.name)}:text, ${values.add(r.authorId)}:text )').join(', ')}\n'
+      'INSERT INTO "chats" ( "name", "author_id", "member_id" )\n'
+      'VALUES ${requests.map((r) => '( ${values.add(r.name)}:text, ${values.add(r.authorId)}:text, ${values.add(r.memberId)}:text )').join(', ')}\n'
       'RETURNING "id"',
       values.values,
     );
@@ -57,9 +69,9 @@ class _ChatRepository extends BaseRepository
     var values = QueryValues();
     await db.query(
       'UPDATE "chats"\n'
-      'SET "name" = COALESCE(UPDATED."name", "chats"."name"), "author_id" = COALESCE(UPDATED."author_id", "chats"."author_id")\n'
-      'FROM ( VALUES ${requests.map((r) => '( ${values.add(r.id)}:int8::int8, ${values.add(r.name)}:text::text, ${values.add(r.authorId)}:text::text )').join(', ')} )\n'
-      'AS UPDATED("id", "name", "author_id")\n'
+      'SET "name" = COALESCE(UPDATED."name", "chats"."name"), "author_id" = COALESCE(UPDATED."author_id", "chats"."author_id"), "member_id" = COALESCE(UPDATED."member_id", "chats"."member_id")\n'
+      'FROM ( VALUES ${requests.map((r) => '( ${values.add(r.id)}:int8::int8, ${values.add(r.name)}:text::text, ${values.add(r.authorId)}:text::text, ${values.add(r.memberId)}:text::text )').join(', ')} )\n'
+      'AS UPDATED("id", "name", "author_id", "member_id")\n'
       'WHERE "chats"."id" = UPDATED."id"',
       values.values,
     );
@@ -70,10 +82,12 @@ class ChatInsertRequest {
   ChatInsertRequest({
     required this.name,
     required this.authorId,
+    required this.memberId,
   });
 
   final String name;
   final String authorId;
+  final String memberId;
 }
 
 class ChatUpdateRequest {
@@ -81,14 +95,52 @@ class ChatUpdateRequest {
     required this.id,
     this.name,
     this.authorId,
+    this.memberId,
   });
 
   final int id;
   final String? name;
   final String? authorId;
+  final String? memberId;
 }
 
-class ChatViewQueryable extends KeyedViewQueryable<ChatView, int> {
+class ShortChatViewQueryable extends KeyedViewQueryable<ShortChatView, int> {
+  @override
+  String get keyName => 'id';
+
+  @override
+  String encodeKey(int key) => TextEncoder.i.encode(key);
+
+  @override
+  String get query => 'SELECT "chats".*'
+      'FROM "chats"';
+
+  @override
+  String get tableAlias => 'chats';
+
+  @override
+  ShortChatView decode(TypedMap map) => ShortChatView(
+      id: map.get('id'),
+      name: map.get('name'),
+      authorId: map.get('author_id'),
+      memberId: map.get('member_id'));
+}
+
+class ShortChatView {
+  ShortChatView({
+    required this.id,
+    required this.name,
+    required this.authorId,
+    required this.memberId,
+  });
+
+  final int id;
+  final String name;
+  final String authorId;
+  final String memberId;
+}
+
+class FullChatViewQueryable extends KeyedViewQueryable<FullChatView, int> {
   @override
   String get keyName => 'id';
 
@@ -110,23 +162,26 @@ class ChatViewQueryable extends KeyedViewQueryable<ChatView, int> {
   String get tableAlias => 'chats';
 
   @override
-  ChatView decode(TypedMap map) => ChatView(
+  FullChatView decode(TypedMap map) => FullChatView(
       id: map.get('id'),
       name: map.get('name'),
       authorId: map.get('author_id'),
+      memberId: map.get('member_id'),
       message: map.getListOpt('message', MessageViewQueryable().decoder) ?? const []);
 }
 
-class ChatView {
-  ChatView({
+class FullChatView {
+  FullChatView({
     required this.id,
     required this.name,
     required this.authorId,
+    required this.memberId,
     required this.message,
   });
 
   final int id;
   final String name;
   final String authorId;
+  final String memberId;
   final List<MessageView> message;
 }
