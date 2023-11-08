@@ -3,7 +3,7 @@ import 'dart:io';
 abstract class Env {
   static int port = int.parse(Platform.environment["PORT"]!);
   static String sk = Platform.environment["SK"]!;
-  static String dbsk = Platform.environment["DBSK"]!;
+  static String dbsk = Platform.environment["DB_SK"]!;
 
   static int accessTokenLife =
       int.parse(Platform.environment["ACCESS_TOKEN_LIFE"]!);

@@ -9,6 +9,122 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
+class ListUsersDto extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ListUsersDto', createEmptyInstance: create)
+    ..pc<UserDto>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'users', $pb.PbFieldType.PM, subBuilder: UserDto.create)
+    ..hasRequiredFields = false
+  ;
+
+  ListUsersDto._() : super();
+  factory ListUsersDto({
+    $core.Iterable<UserDto>? users,
+  }) {
+    final _result = create();
+    if (users != null) {
+      _result.users.addAll(users);
+    }
+    return _result;
+  }
+  factory ListUsersDto.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ListUsersDto.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ListUsersDto clone() => ListUsersDto()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ListUsersDto copyWith(void Function(ListUsersDto) updates) => super.copyWith((message) => updates(message as ListUsersDto)) as ListUsersDto; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ListUsersDto create() => ListUsersDto._();
+  ListUsersDto createEmptyInstance() => create();
+  static $pb.PbList<ListUsersDto> createRepeated() => $pb.PbList<ListUsersDto>();
+  @$core.pragma('dart2js:noInline')
+  static ListUsersDto getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ListUsersDto>(create);
+  static ListUsersDto? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<UserDto> get users => $_getList(0);
+}
+
+class FindDto extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'FindDto', createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'key')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'limit')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'offset')
+    ..hasRequiredFields = false
+  ;
+
+  FindDto._() : super();
+  factory FindDto({
+    $core.String? key,
+    $core.String? limit,
+    $core.String? offset,
+  }) {
+    final _result = create();
+    if (key != null) {
+      _result.key = key;
+    }
+    if (limit != null) {
+      _result.limit = limit;
+    }
+    if (offset != null) {
+      _result.offset = offset;
+    }
+    return _result;
+  }
+  factory FindDto.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory FindDto.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  FindDto clone() => FindDto()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  FindDto copyWith(void Function(FindDto) updates) => super.copyWith((message) => updates(message as FindDto)) as FindDto; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static FindDto create() => FindDto._();
+  FindDto createEmptyInstance() => create();
+  static $pb.PbList<FindDto> createRepeated() => $pb.PbList<FindDto>();
+  @$core.pragma('dart2js:noInline')
+  static FindDto getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FindDto>(create);
+  static FindDto? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get key => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set key($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasKey() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearKey() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get limit => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set limit($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasLimit() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLimit() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get offset => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set offset($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasOffset() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearOffset() => clearField(3);
+}
+
 enum UserDto_OptionalPassword {
   password, 
   notSet

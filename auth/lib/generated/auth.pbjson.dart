@@ -8,6 +8,28 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
+@$core.Deprecated('Use listUsersDtoDescriptor instead')
+const ListUsersDto$json = const {
+  '1': 'ListUsersDto',
+  '2': const [
+    const {'1': 'users', '3': 1, '4': 3, '5': 11, '6': '.UserDto', '10': 'users'},
+  ],
+};
+
+/// Descriptor for `ListUsersDto`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listUsersDtoDescriptor = $convert.base64Decode('CgxMaXN0VXNlcnNEdG8SHgoFdXNlcnMYASADKAsyCC5Vc2VyRHRvUgV1c2Vycw==');
+@$core.Deprecated('Use findDtoDescriptor instead')
+const FindDto$json = const {
+  '1': 'FindDto',
+  '2': const [
+    const {'1': 'key', '3': 1, '4': 1, '5': 9, '10': 'key'},
+    const {'1': 'limit', '3': 2, '4': 1, '5': 9, '10': 'limit'},
+    const {'1': 'offset', '3': 3, '4': 1, '5': 9, '10': 'offset'},
+  ],
+};
+
+/// Descriptor for `FindDto`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List findDtoDescriptor = $convert.base64Decode('CgdGaW5kRHRvEhAKA2tleRgBIAEoCVIDa2V5EhQKBWxpbWl0GAIgASgJUgVsaW1pdBIWCgZvZmZzZXQYAyABKAlSBm9mZnNldA==');
 @$core.Deprecated('Use userDtoDescriptor instead')
 const UserDto$json = const {
   '1': 'UserDto',

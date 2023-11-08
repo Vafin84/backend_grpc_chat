@@ -38,6 +38,10 @@ class AuthRpcClient extends $grpc.Client {
       '/AuthRpc/FetchUser',
       ($0.RequestDto value) => value.writeToBuffer(),
       ($core.List<$core.int> value) => $0.UserDto.fromBuffer(value));
+  static final _$findeUser = $grpc.ClientMethod<$0.FindDto, $0.ListUsersDto>(
+      '/AuthRpc/FindeUser',
+      ($0.FindDto value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.ListUsersDto.fromBuffer(value));
 
   AuthRpcClient($grpc.ClientChannel channel,
       {$grpc.CallOptions? options,
@@ -72,6 +76,11 @@ class AuthRpcClient extends $grpc.Client {
   $grpc.ResponseFuture<$0.UserDto> fetchUser($0.RequestDto request,
       {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$fetchUser, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.ListUsersDto> findeUser($0.FindDto request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$findeUser, request, options: options);
   }
 }
 
@@ -121,6 +130,13 @@ abstract class AuthRpcServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.RequestDto.fromBuffer(value),
         ($0.UserDto value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.FindDto, $0.ListUsersDto>(
+        'FindeUser',
+        findeUser_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.FindDto.fromBuffer(value),
+        ($0.ListUsersDto value) => value.writeToBuffer()));
   }
 
   $async.Future<$0.TokensDto> signIn_Pre(
@@ -153,6 +169,11 @@ abstract class AuthRpcServiceBase extends $grpc.Service {
     return fetchUser(call, await request);
   }
 
+  $async.Future<$0.ListUsersDto> findeUser_Pre(
+      $grpc.ServiceCall call, $async.Future<$0.FindDto> request) async {
+    return findeUser(call, await request);
+  }
+
   $async.Future<$0.TokensDto> signIn(
       $grpc.ServiceCall call, $0.UserDto request);
   $async.Future<$0.TokensDto> signUp(
@@ -165,4 +186,6 @@ abstract class AuthRpcServiceBase extends $grpc.Service {
       $grpc.ServiceCall call, $0.RequestDto request);
   $async.Future<$0.UserDto> fetchUser(
       $grpc.ServiceCall call, $0.RequestDto request);
+  $async.Future<$0.ListUsersDto> findeUser(
+      $grpc.ServiceCall call, $0.FindDto request);
 }

@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:auth/data/db.dart';
 import 'package:auth/data/user/user.dart';
 import 'package:auth/env.dart';
@@ -45,10 +47,11 @@ class AuthRpc extends AuthRpcServiceBase {
     }
 
     final hashPassword = Utils.getHashPassword(request.password);
-    final users = await db.users.queryUsers(
-        QueryParams(where: "email='${Utils.encryptField(request.email)}'"));
+    final query = "email='${Utils.encryptField(request.email)}'";
+    final users = await db.users.queryUsers(QueryParams(where: query));
+
     if (users.isEmpty) throw GrpcError.notFound("User not found");
-    final user = users[0];
+    final user = users.first;
     if (hashPassword != user.password) {
       throw GrpcError.unauthenticated("Password wrong");
     }
@@ -108,5 +111,21 @@ class AuthRpc extends AuthRpcServiceBase {
       accessToken: issueJwtHS256(accsessTokenSet, Env.sk),
       refreshToken: issueJwtHS256(refreshTokenSet, Env.sk),
     );
+  }
+
+  @override
+  Future<ListUsersDto> findeUser(ServiceCall call, FindDto request) async {
+    final limit = int.tryParse(request.limit) ?? 100;
+    final offset = int.tryParse(request.offset) ?? 0;
+    final key = request.key;
+    if (key.isEmpty) return ListUsersDto(users: []);
+    final query = "username LIKE '%$key%'";
+    final listUsers = await db.users.queryUsers(QueryParams(
+      limit: limit,
+      offset: offset,
+      orderBy: "username",
+      where: query,
+    ));
+    return await Isolate.run(() => Utils.parseUsers(listUsers));
   }
 }

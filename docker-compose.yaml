@@ -18,7 +18,7 @@ services:
       DB_USERNAME: ${db_user_auth}
       DB_PASSWORD: ${db_password_auth}
       DB_SSL: ${db_use_ssl}
-      DBSK: ${db_sk_auth}
+      DB_SK: ${db_sk_auth}
       ACCESS_TOKEN_LIFE: 100
       REFRESH_TOKEN_LIFE: 200
 

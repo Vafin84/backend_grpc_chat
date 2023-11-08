@@ -17,7 +17,9 @@ abstract class Utils {
   static String encryptField(String value, {bool isDecode = false}) {
     final key = Key.fromUtf8(Env.dbsk);
     final iv = IV.fromLength(16);
-    final encryptor = Encrypter(AES(key));
+    final encryptor = Encrypter(
+      AES(key, mode: AESMode.ecb),
+    );
 
     return isDecode
         ? encryptor.decrypt64(value, iv: iv)
@@ -41,4 +43,11 @@ abstract class Utils {
         email: encryptField(user.email, isDecode: true),
         username: user.username,
       );
+  static ListUsersDto parseUsers(List<UserView> users) {
+    try {
+      return ListUsersDto(users: [...users.map((e) => convertUserDto(e))]);
+    } catch (e) {
+      throw GrpcError.internal('Error in parseUsers ${e.toString()}');
+    }
+  }
 }
