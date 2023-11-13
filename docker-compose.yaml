@@ -21,10 +21,10 @@ services:
       DB_SK: ${db_sk_auth}
       ACCESS_TOKEN_LIFE: 100
       REFRESH_TOKEN_LIFE: 200
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 50M  
+    deploy:
+      resources:
+        limits:
+          memory: 50M  
 
   db_auth:
     container_name: db_auth
@@ -44,6 +44,10 @@ services:
       - db_auth_vol:/var/lib/postgresql/data
     networks:
       - server_net
+    deploy:
+      resources:
+        limits:
+          memory: 50M        
 
   db_chats:
     container_name: db_chats
@@ -63,6 +67,10 @@ services:
       - db_chats_vol:/var/lib/postgresql/data
     networks:
       - server_net
+    deploy:
+      resources:
+        limits:
+          memory: 50M        
 
   chats:
     container_name: chats
@@ -82,9 +90,24 @@ services:
       DB_PASSWORD: ${db_password_chats}
       DB_SSL: ${db_use_ssl}
       DB_SK: ${db_sk_chats}
+    deploy:
+      resources:
+        limits:
+          memory: 50M        
 
-  nginx:
-    container_name: nginx
+  # nginx:
+  #   container_name: nginx
+  #   ports:
+  #     - 8500:8500
+  #   depends_on:
+  #     - auth
+  #     - chats
+  #   networks:
+  #     - server_net
+  #   build: ./nginx
+
+  envoy:
+    container_name: envoy
     ports:
       - 8500:8500
     depends_on:
@@ -92,7 +115,12 @@ services:
       - chats
     networks:
       - server_net
-    build: ./nginx
+    build: ./envoy
+    deploy:
+      resources:
+        limits:
+          memory: 50M      
+
 
 
 volumes:
