@@ -17,9 +17,23 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> deleteFile(ServiceCall call, FileDto request) {
-    // TODO: implement deleteFile
-    throw UnimplementedError();
+  Future<ResponseDto> deleteFile(ServiceCall call, FileDto request) async {
+    if (request.bucket.isEmpty) {
+      throw GrpcError.invalidArgument("Bucket not found");
+    }
+    if (request.name.isEmpty) {
+      throw GrpcError.invalidArgument("Name not found");
+    }
+    try {
+      final message =
+          await storage.deleteFile(bucket: request.bucket, name: request.name);
+      return ResponseDto(
+        isComplete: true,
+        message: message,
+      );
+    } on Object catch (e) {
+      throw GrpcError.internal("Delete file is error $e");
+    }
   }
 
   @override
@@ -46,10 +60,10 @@ final class FilesRpc extends FilesRpcServiceBase {
       throw GrpcError.invalidArgument("Bucket not found");
     }
     if (request.name.isEmpty) {
-      throw GrpcError.invalidArgument("Bucket not found");
+      throw GrpcError.invalidArgument("Name not found");
     }
     if (request.data.isEmpty) {
-      throw GrpcError.invalidArgument("Bucket not found");
+      throw GrpcError.invalidArgument("File not found");
     }
 
     try {
