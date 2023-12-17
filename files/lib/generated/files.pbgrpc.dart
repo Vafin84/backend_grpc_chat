@@ -50,9 +50,11 @@ class FilesRpcClient extends $grpc.Client {
     return $createUnaryCall(_$putFiles, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.FileDto> fetchFile($0.FileDto request,
+  $grpc.ResponseStream<$0.FileDto> fetchFile($0.FileDto request,
       {$grpc.CallOptions? options}) {
-    return $createUnaryCall(_$fetchFile, request, options: options);
+    return $createStreamingCall(
+        _$fetchFile, $async.Stream.fromIterable([request]),
+        options: options);
   }
 
   $grpc.ResponseFuture<$0.ResponseDto> deleteFile($0.FileDto request,
@@ -91,7 +93,7 @@ abstract class FilesRpcServiceBase extends $grpc.Service {
         'FetchFile',
         fetchFile_Pre,
         false,
-        false,
+        true,
         ($core.List<$core.int> value) => $0.FileDto.fromBuffer(value),
         ($0.FileDto value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.FileDto, $0.ResponseDto>(
@@ -129,9 +131,9 @@ abstract class FilesRpcServiceBase extends $grpc.Service {
     return putFiles(call, await request);
   }
 
-  $async.Future<$0.FileDto> fetchFile_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.FileDto> request) async {
-    return fetchFile(call, await request);
+  $async.Stream<$0.FileDto> fetchFile_Pre(
+      $grpc.ServiceCall call, $async.Future<$0.FileDto> request) async* {
+    yield* fetchFile(call, await request);
   }
 
   $async.Future<$0.ResponseDto> deleteFile_Pre(
@@ -156,7 +158,7 @@ abstract class FilesRpcServiceBase extends $grpc.Service {
 
   $async.Future<$0.ResponseDto> putFiles(
       $grpc.ServiceCall call, $0.FileDto request);
-  $async.Future<$0.FileDto> fetchFile(
+  $async.Stream<$0.FileDto> fetchFile(
       $grpc.ServiceCall call, $0.FileDto request);
   $async.Future<$0.ResponseDto> deleteFile(
       $grpc.ServiceCall call, $0.FileDto request);

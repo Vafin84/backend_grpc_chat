@@ -57,4 +57,14 @@ final class MinioStorage implements IStorage {
     await minio.removeObject(bucket, name);
     return "successe";
   }
+
+  @override
+  Stream<List<int>> fetchFile(
+      {required String bucket, required String name}) async* {
+    if (!await minio.bucketExists(bucket)) {
+      throw GrpcError.notFound("Bucket $bucket not found");
+    }
+    final stream = await minio.getObject(bucket, name);
+    yield* stream;
+  }
 }

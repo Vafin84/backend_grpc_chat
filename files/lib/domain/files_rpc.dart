@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:files/domain/i_storage.dart';
@@ -18,9 +19,7 @@ final class FilesRpc extends FilesRpcServiceBase {
 
   @override
   Future<ResponseDto> deleteFile(ServiceCall call, FileDto request) async {
-    if (request.bucket.isEmpty) {
-      throw GrpcError.invalidArgument("Bucket not found");
-    }
+    _checkFields(request);
     if (request.name.isEmpty) {
       throw GrpcError.invalidArgument("Name not found");
     }
@@ -36,6 +35,12 @@ final class FilesRpc extends FilesRpcServiceBase {
     }
   }
 
+  void _checkFields(FileDto request) {
+    if (request.bucket.isEmpty) {
+      throw GrpcError.invalidArgument("Bucket not found");
+    }
+  }
+
   @override
   Future<AvatarDto> fetchAvatar(ServiceCall call, AvatarDto request) {
     // TODO: implement fetchAvatar
@@ -43,9 +48,20 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<FileDto> fetchFile(ServiceCall call, FileDto request) {
-    // TODO: implement fetchFile
-    throw UnimplementedError();
+  Stream<FileDto> fetchFile(ServiceCall call, FileDto request) async* {
+    _checkFields(request);
+    try {
+      yield* storage
+          .fetchFile(bucket: request.bucket, name: request.name)
+          .transform(StreamTransformer.fromHandlers(
+        handleData: (data, sink) {
+          final arr = Uint8List.fromList(data);
+          sink.add(FileDto(data: arr));
+        },
+      ));
+    } catch (e) {
+      throw GrpcError.internal("FetchFile is error $e");
+    }
   }
 
   @override
