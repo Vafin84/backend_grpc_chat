@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:files/domain/i_storage.dart';
 import 'package:files/generated/files.pbgrpc.dart';
+import 'package:files/utils.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc/src/server/call.dart';
 
@@ -12,9 +13,17 @@ final class FilesRpc extends FilesRpcServiceBase {
   FilesRpc(this.storage);
 
   @override
-  Future<ResponseDto> deleteAvatar(ServiceCall call, AvatarDto request) {
-    // TODO: implement deleteAvatar
-    throw UnimplementedError();
+  Future<ResponseDto> deleteAvatar(ServiceCall call, FileDto request) async {
+    try {
+      final id = Utils.getIdFromMetadata(call);
+      await storage.deleteFile(bucket: "avatars", name: id.toString());
+      return ResponseDto(
+        isComplete: true,
+        message: "Delete avatar is complete",
+      );
+    } catch (e) {
+      throw GrpcError.internal("Delete avatar is error $e");
+    }
   }
 
   @override
@@ -42,7 +51,7 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<AvatarDto> fetchAvatar(ServiceCall call, AvatarDto request) {
+  Future<FileDto> fetchAvatar(ServiceCall call, FileDto request) {
     // TODO: implement fetchAvatar
     throw UnimplementedError();
   }
@@ -65,9 +74,28 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<ResponseDto> putAvatar(ServiceCall call, AvatarDto request) {
-    // TODO: implement putAvatar
-    throw UnimplementedError();
+  Future<ResponseDto> putAvatar(ServiceCall call, FileDto request) async {
+    if (request.data.isEmpty) {
+      throw GrpcError.invalidArgument("File not found");
+    }
+    if (request.data.length > 1000000) {
+      throw GrpcError.invalidArgument("Avatar is very big");
+    }
+    try {
+      final id = Utils.getIdFromMetadata(call);
+      final tag = await storage.putFile(
+          bucket: "avatars",
+          name: id.toString(),
+          data: request.data as Uint8List);
+
+      return ResponseDto(
+        isComplete: true,
+        message: "Put avatar is complete",
+        tag: tag,
+      );
+    } catch (e) {
+      throw GrpcError.internal("PutAvatar is error $e");
+    }
   }
 
   @override

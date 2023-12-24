@@ -98,53 +98,6 @@ class FileDto extends $pb.GeneratedMessage {
   void clearTag() => clearField(4);
 }
 
-class AvatarDto extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AvatarDto', createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)
-    ..hasRequiredFields = false
-  ;
-
-  AvatarDto._() : super();
-  factory AvatarDto({
-    $core.List<$core.int>? data,
-  }) {
-    final _result = create();
-    if (data != null) {
-      _result.data = data;
-    }
-    return _result;
-  }
-  factory AvatarDto.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory AvatarDto.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  AvatarDto clone() => AvatarDto()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  AvatarDto copyWith(void Function(AvatarDto) updates) => super.copyWith((message) => updates(message as AvatarDto)) as AvatarDto; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static AvatarDto create() => AvatarDto._();
-  AvatarDto createEmptyInstance() => create();
-  static $pb.PbList<AvatarDto> createRepeated() => $pb.PbList<AvatarDto>();
-  @$core.pragma('dart2js:noInline')
-  static AvatarDto getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AvatarDto>(create);
-  static AvatarDto? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.List<$core.int> get data => $_getN(0);
-  @$pb.TagNumber(1)
-  set data($core.List<$core.int> v) { $_setBytes(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasData() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearData() => clearField(1);
-}
-
 class ResponseDto extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ResponseDto', createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')

@@ -5,9 +5,9 @@ service FilesRpc{
     rpc FetchFile (FileDto) returns (stream FileDto);
     rpc DeleteFile (FileDto) returns (ResponseDto);
 
-    rpc PutAvatar (AvatarDto) returns (ResponseDto);
-    rpc FetchAvatar (AvatarDto) returns (AvatarDto);
-    rpc DeleteAvatar (AvatarDto) returns (ResponseDto);
+    rpc PutAvatar (FileDto) returns (ResponseDto);
+    rpc FetchAvatar (FileDto) returns (FileDto);
+    rpc DeleteAvatar (FileDto) returns (ResponseDto);
 }
 
 
@@ -16,10 +16,6 @@ message FileDto{
     string name =2;
     string bucket=3;
     string tag=4;
-}
-
-message AvatarDto{
-    bytes data =1;
 }
 
 

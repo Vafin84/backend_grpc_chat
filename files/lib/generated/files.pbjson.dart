@@ -21,16 +21,6 @@ const FileDto$json = const {
 
 /// Descriptor for `FileDto`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List fileDtoDescriptor = $convert.base64Decode('CgdGaWxlRHRvEhIKBGRhdGEYASABKAxSBGRhdGESEgoEbmFtZRgCIAEoCVIEbmFtZRIWCgZidWNrZXQYAyABKAlSBmJ1Y2tldBIQCgN0YWcYBCABKAlSA3RhZw==');
-@$core.Deprecated('Use avatarDtoDescriptor instead')
-const AvatarDto$json = const {
-  '1': 'AvatarDto',
-  '2': const [
-    const {'1': 'data', '3': 1, '4': 1, '5': 12, '10': 'data'},
-  ],
-};
-
-/// Descriptor for `AvatarDto`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List avatarDtoDescriptor = $convert.base64Decode('CglBdmF0YXJEdG8SEgoEZGF0YRgBIAEoDFIEZGF0YQ==');
 @$core.Deprecated('Use responseDtoDescriptor instead')
 const ResponseDto$json = const {
   '1': 'ResponseDto',
