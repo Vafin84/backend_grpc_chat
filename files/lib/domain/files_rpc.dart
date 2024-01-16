@@ -7,6 +7,8 @@ import 'package:files/utils.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc/src/server/call.dart';
 
+const String _avatars = "avatars";
+
 final class FilesRpc extends FilesRpcServiceBase {
   final IStorage storage;
 
@@ -16,7 +18,7 @@ final class FilesRpc extends FilesRpcServiceBase {
   Future<ResponseDto> deleteAvatar(ServiceCall call, FileDto request) async {
     try {
       final id = Utils.getIdFromMetadata(call);
-      await storage.deleteFile(bucket: "avatars", name: id.toString());
+      await storage.deleteFile(bucket: _avatars, name: id.toString());
       return ResponseDto(
         isComplete: true,
         message: "Delete avatar is complete",
@@ -51,9 +53,15 @@ final class FilesRpc extends FilesRpcServiceBase {
   }
 
   @override
-  Future<FileDto> fetchAvatar(ServiceCall call, FileDto request) {
-    // TODO: implement fetchAvatar
-    throw UnimplementedError();
+  Future<FileDto> fetchAvatar(ServiceCall call, FileDto request) async {
+    final id = Utils.getIdFromMetadata(call);
+    final list = <int>[];
+    final stream = storage.fetchFile(bucket: _avatars, name: id.toString());
+    final streamData = await stream.toList();
+    for (var e in streamData) {
+      list.addAll(e);
+    }
+    return FileDto(data: Uint8List.fromList(list));
   }
 
   @override
@@ -84,7 +92,7 @@ final class FilesRpc extends FilesRpcServiceBase {
     try {
       final id = Utils.getIdFromMetadata(call);
       final tag = await storage.putFile(
-          bucket: "avatars",
+          bucket: _avatars,
           name: id.toString(),
           data: request.data as Uint8List);
 
