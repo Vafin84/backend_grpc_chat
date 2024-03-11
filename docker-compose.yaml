@@ -24,12 +24,24 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M  
+          memory: 50M 
+
+  auth_sms:
+    container_name: auth_sms
+    build: ./auth
+    depends_on:
+      - auth
+    # ports:
+    #   - ${auth_port}:${auth_port}
+    networks:
+      - server_net
+    environment:
+      PORT: ${AUTH_SMS_PORT}        
 
   db_auth:
     container_name: db_auth
-    # ports:
-    #   - ${db_port_auth}:${db_port_auth}
+    ports:
+      - ${db_port_auth}:${db_port_auth}
 
     environment:
       POSTGRES_USER: ${db_user_auth}
