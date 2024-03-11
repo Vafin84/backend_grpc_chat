@@ -60,10 +60,14 @@ final $typed_data.Uint8List tokensDtoDescriptor = $convert.base64Decode('CglUb2t
 @$core.Deprecated('Use requestDtoDescriptor instead')
 const RequestDto$json = const {
   '1': 'RequestDto',
+  '2': const [
+    const {'1': 'phone', '3': 1, '4': 1, '5': 9, '10': 'phone'},
+    const {'1': 'code', '3': 2, '4': 1, '5': 9, '10': 'code'},
+  ],
 };
 
 /// Descriptor for `RequestDto`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List requestDtoDescriptor = $convert.base64Decode('CgpSZXF1ZXN0RHRv');
+final $typed_data.Uint8List requestDtoDescriptor = $convert.base64Decode('CgpSZXF1ZXN0RHRvEhQKBXBob25lGAEgASgJUgVwaG9uZRISCgRjb2RlGAIgASgJUgRjb2Rl');
 @$core.Deprecated('Use responseDtoDescriptor instead')
 const ResponseDto$json = const {
   '1': 'ResponseDto',

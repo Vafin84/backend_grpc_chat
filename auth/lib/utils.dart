@@ -40,7 +40,7 @@ abstract class Utils {
 
   static UserDto convertUserDto(UserView user) => UserDto(
         id: user.id.toString(),
-        email: encryptField(user.email, isDecode: true),
+        email: encryptField(user.email ?? "", isDecode: true),
         username: user.username,
       );
   static ListUsersDto parseUsers(List<UserView> users) {

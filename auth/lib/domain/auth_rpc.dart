@@ -128,4 +128,16 @@ class AuthRpc extends AuthRpcServiceBase {
     ));
     return await Isolate.run(() => Utils.parseUsers(listUsers));
   }
+
+  @override
+  Future<TokensDto> sendSms(ServiceCall call, RequestDto request) {
+    // TODO: implement sendSms
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ResponseDto> signInSms(ServiceCall call, RequestDto request) {
+    // TODO: implement signInSms
+    throw UnimplementedError();
+  }
 }

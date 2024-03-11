@@ -8,6 +8,8 @@ service AuthRpc{
     rpc DeleteUser (RequestDto) returns (ResponseDto);
     rpc FetchUser (RequestDto) returns (UserDto);
     rpc FindeUser (FindDto) returns (ListUsersDto);
+    rpc SignInSms (RequestDto) returns (ResponseDto);
+    rpc SendSms (RequestDto) returns (TokensDto);
 }
 
 message ListUsersDto{
@@ -36,7 +38,10 @@ message TokensDto{
     string refresh_token = 2;
 }
 
-message RequestDto{}
+message RequestDto{
+    string phone = 1;
+    string code = 2;
+}
 
 message ResponseDto{
     string message = 1;
