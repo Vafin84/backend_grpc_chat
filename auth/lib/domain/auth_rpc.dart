@@ -4,12 +4,26 @@ import 'package:auth/data/db.dart';
 import 'package:auth/data/user/user.dart';
 import 'package:auth/env.dart';
 import 'package:auth/generated/auth.pbgrpc.dart';
+import 'package:auth/generated/auth_sms.pbgrpc.dart';
 import 'package:auth/utils.dart';
 import 'package:grpc/grpc.dart';
 import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:stormberry/stormberry.dart';
+import 'package:username_generator/username_generator.dart';
 
 class AuthRpc extends AuthRpcServiceBase {
+  late final ClientChannel _channel;
+  late final AuthSmsRpcClient _smsClient;
+
+  AuthRpc() {
+    _channel = ClientChannel(
+      "auth_sms",
+      port: Env.portSms,
+      options: ChannelOptions(credentials: ChannelCredentials.insecure()),
+    );
+    _smsClient = AuthSmsRpcClient(_channel);
+  }
+
   @override
   Future<ResponseDto> deleteUser(ServiceCall call, RequestDto request) async {
     final id = Utils.getIdFromMetadata(call);
@@ -130,14 +144,52 @@ class AuthRpc extends AuthRpcServiceBase {
   }
 
   @override
-  Future<TokensDto> sendSms(ServiceCall call, RequestDto request) {
-    // TODO: implement sendSms
-    throw UnimplementedError();
+  Future<TokensDto> sendSms(ServiceCall call, RequestDto request) async {
+    if (request.phone.isEmpty) {
+      throw GrpcError.invalidArgument("Phone not found");
+    }
+    if (request.code.isEmpty) {
+      throw GrpcError.invalidArgument("Code not found");
+    }
+    final users = await db.users.queryUsers(QueryParams(
+        limit: 1, where: "phone='${Utils.encryptField(request.phone)}'"));
+    if (users.isEmpty) {
+      throw GrpcError.notFound("User not found");
+    } else {
+      if (users.first.code != request.code) {
+        throw GrpcError.unauthenticated("Code wrong");
+      }
+      return _createTokens(users.first.id.toString());
+    }
   }
 
   @override
-  Future<ResponseDto> signInSms(ServiceCall call, RequestDto request) {
-    // TODO: implement signInSms
-    throw UnimplementedError();
+  Future<ResponseDto> signInSms(ServiceCall call, RequestDto request) async {
+    if (request.phone.isEmpty) {
+      throw GrpcError.invalidArgument("Phone not found");
+    }
+    try {
+      final response =
+          await _smsClient.authSms(SmsRequestDto(phone: request.phone));
+      final users = await db.users.queryUsers(QueryParams(
+          limit: 1, where: "phone='${Utils.encryptField(request.phone)}'"));
+      if (users.isEmpty) {
+        await db.users.insertOne(UserInsertRequest(
+          username: _getRandomUsername(),
+          phone: Utils.encryptField(request.phone),
+          code: response.sms,
+        ));
+      } else {
+        await db.users.updateOne(UserUpdateRequest(
+          id: users.first.id,
+          code: response.sms,
+        ));
+      }
+      return ResponseDto(message: "Code sent");
+    } catch (e) {
+      throw GrpcError.internal(e.toString());
+    }
   }
+
+  String _getRandomUsername() => UsernameGenerator().generateRandom();
 }

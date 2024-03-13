@@ -18,4 +18,5 @@ abstract class User {
   String? get avatar;
   String? get firstName;
   String? get lastName;
+  String? get code;
 }

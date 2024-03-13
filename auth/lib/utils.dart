@@ -17,9 +17,7 @@ abstract class Utils {
   static String encryptField(String value, {bool isDecode = false}) {
     final key = Key.fromUtf8(Env.dbsk);
     final iv = IV.fromLength(16);
-    final encryptor = Encrypter(
-      AES(key, mode: AESMode.ecb),
-    );
+    final encryptor = Encrypter(AES(key, mode: AESMode.ecb));
 
     return isDecode
         ? encryptor.decrypt64(value, iv: iv)

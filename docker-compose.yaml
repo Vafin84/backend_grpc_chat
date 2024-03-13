@@ -22,14 +22,11 @@ services:
       ACCESS_TOKEN_LIFE: 100
       REFRESH_TOKEN_LIFE: 200
       AUTH_SMS_PORT: ${AUTH_SMS_PORT}
-    deploy:
-      resources:
-        limits:
-          memory: 50M 
+  
 
   auth_sms:
     container_name: auth_sms
-    build: ./auth
+    build: ./auth_sms
     depends_on:
       - auth
     # ports:
@@ -57,10 +54,7 @@ services:
       - db_auth_vol:/var/lib/postgresql/data
     networks:
       - server_net
-    deploy:
-      resources:
-        limits:
-          memory: 50M        
+      
 
   db_chats:
     container_name: db_chats
